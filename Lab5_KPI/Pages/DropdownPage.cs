@@ -1,7 +1,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
-namespace SeleniumLab5.Pages;
+namespace Lab5_KPI.Pages;
 
 public class DropdownPage
 {

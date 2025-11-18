@@ -2,32 +2,83 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 
-namespace SeleniumLab5.Pages;
-
-public class EntryAdPage
+namespace Lab5_KPI.Pages
 {
-    private readonly IWebDriver _d; private readonly WebDriverWait _w;
-    public EntryAdPage(IWebDriver d, WebDriverWait w){_d=d; _w=w;}
-    public void Open()=>_d.Navigate().GoToUrl("https://the-internet.herokuapp.com/entry_ad");
-
-    public bool ModalVisible()
+    public class EntryAdPage
     {
-        try
+        private readonly IWebDriver _driver;
+        private readonly WebDriverWait _wait;
+
+        public EntryAdPage(IWebDriver driver, WebDriverWait wait)
         {
-            var modal=_w.Until(ExpectedConditions.ElementIsVisible(By.CssSelector(".modal")));
-            return modal.Displayed;
-        } catch { return false; }
-    }
+            _driver = driver ?? throw new ArgumentNullException(nameof(driver));
+            _wait  = wait  ?? throw new ArgumentNullException(nameof(wait));
+        }
 
-    public void CloseModal()
-    {
-        var close = _w.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector(".modal .modal-footer p")));
-        close.Click();
-        _w.Until(ExpectedConditions.InvisibilityOfElementLocated(By.CssSelector(".modal")));
-    }
+        public void Open()
+        {
+            _driver.Navigate().GoToUrl("https://the-internet.herokuapp.com/entry_ad");
+            // чекаємо, поки модалка хоч раз з’явиться (або буде видимою)
+            _wait.Until(ExpectedConditions.ElementIsVisible(By.Id("modal")));
+        }
 
-    public void Reopen()
-    {
-        _d.FindElement(By.LinkText("click here")).Click();
+        private IWebElement Modal => _driver.FindElement(By.Id("modal"));
+
+        public bool ModalVisible()
+        {
+            try
+            {
+                return Modal.Displayed;
+            }
+            catch (NoSuchElementException)
+            {
+                return false;
+            }
+        }
+
+        public void CloseModal()
+        {
+            // кнопка "Close" в футері модального
+            var close = _wait.Until(
+                ExpectedConditions.ElementToBeClickable(
+                    By.XPath("//div[@id='modal']//p[text()='Close']"))
+            );
+            close.Click();
+
+            // чекаємо, поки модалка стане невидимою
+            _wait.Until(d =>
+            {
+                try
+                {
+                    return !d.FindElement(By.Id("modal")).Displayed;
+                }
+                catch (NoSuchElementException)
+                {
+                    return true;
+                }
+            });
+        }
+
+        public void Reopen()
+        {
+            // посилання "click here" для рестарту реклами
+            var restart = _wait.Until(
+                ExpectedConditions.ElementToBeClickable(By.Id("restart-ad"))
+            );
+            restart.Click();
+
+            // чекаємо, поки модалка знову стане видимою
+            _wait.Until(d =>
+            {
+                try
+                {
+                    return d.FindElement(By.Id("modal")).Displayed;
+                }
+                catch (NoSuchElementException)
+                {
+                    return false;
+                }
+            });
+        }
     }
 }

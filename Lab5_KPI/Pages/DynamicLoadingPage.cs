@@ -2,7 +2,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 
-namespace SeleniumLab5.Pages;
+namespace Lab5_KPI.Pages;
 
 public class DynamicLoadingPage
 {

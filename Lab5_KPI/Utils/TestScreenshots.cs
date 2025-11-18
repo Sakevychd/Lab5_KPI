@@ -1,17 +1,27 @@
+using System.IO;
+using System.Linq;
 using OpenQA.Selenium;
+using NUnit.Framework;
 
-namespace SeleniumLab5.Utils;
-
-public static class TestScreenshots
+namespace Lab5_KPI.Utils
 {
-    public static string Save(IWebDriver driver, string testName)
+    public static class TestScreenshots
     {
-        var dir = Path.Combine(TestContext.CurrentContext.WorkDirectory, "screens");
-        Directory.CreateDirectory(dir);
-        var path = Path.Combine(dir, $"{DateTime.Now:yyyyMMdd_HHmmss}_{testName}.png");
-        var shot = ((ITakesScreenshot)driver).GetScreenshot();
-        shot.SaveAsFile(path, ScreenshotImageFormat.Png);
-        TestContext.AddTestAttachment(path);
-        return path;
+        public static string Save(IWebDriver driver, string testName)
+        {
+            var dir = Path.Combine(TestContext.CurrentContext.WorkDirectory, "screens");
+            Directory.CreateDirectory(dir);
+
+            var safeName = new string(testName.Select(ch =>
+                Path.GetInvalidFileNameChars().Contains(ch) ? '_' : ch).ToArray());
+
+            var path = Path.Combine(dir, $"{System.DateTime.Now:yyyyMMdd_HHmmss}_{safeName}.png");
+
+            var shot = ((ITakesScreenshot)driver).GetScreenshot();
+            File.WriteAllBytes(path, shot.AsByteArray); // cross-version safe
+
+            TestContext.AddTestAttachment(path);
+            return path;
+        }
     }
 }

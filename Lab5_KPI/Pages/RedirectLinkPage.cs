@@ -1,6 +1,6 @@
 using OpenQA.Selenium;
 
-namespace SeleniumLab5.Pages;
+namespace Lab5_KPI.Pages;
 
 public class RedirectLinkPage
 {

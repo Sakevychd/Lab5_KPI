@@ -1,25 +1,22 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 
-namespace SeleniumLab5.Drivers;
-
-public static class WebDriverFactory
+namespace Lab5_KPI.Drivers
 {
-    public static IWebDriver CreateChrome(string? downloadDir = null)
+    public static class WebDriverFactory
     {
-        var opts = new ChromeOptions();
-        opts.AddArgument("--start-maximized");
-        opts.AddArgument("--disable-infobars");
-        opts.AddArgument("--disable-gpu");
-        opts.AddArgument("--no-sandbox");
-
-        // автозавантаження файлів для File Download
-        if (!string.IsNullOrEmpty(downloadDir))
+        public static IWebDriver CreateChrome(string downloadDir)
         {
-            opts.AddUserProfilePreference("download.default_directory", downloadDir);
-            opts.AddUserProfilePreference("download.prompt_for_download", false);
-            opts.AddUserProfilePreference("safebrowsing.enabled", true);
+            var options = new ChromeOptions();
+
+            // налаштування завантажень
+            options.AddUserProfilePreference("download.default_directory", downloadDir);
+            options.AddUserProfilePreference("download.prompt_for_download", false);
+            options.AddUserProfilePreference("safebrowsing.enabled", true);
+
+            // можна лишити, щоб вікно було великим
+            options.AddArgument("--start-maximized");
+            return new ChromeDriver(options);
         }
-        return new ChromeDriver(opts);
     }
 }

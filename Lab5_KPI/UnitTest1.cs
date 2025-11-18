@@ -1,6 +1,6 @@
 ﻿namespace Lab5_KPI;
 
-public class Tests
+public class Test
 {
     [SetUp]
     public void Setup()

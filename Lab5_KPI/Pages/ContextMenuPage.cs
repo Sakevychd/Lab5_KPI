@@ -1,7 +1,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 
-namespace SeleniumLab5.Pages;
+namespace Lab5_KPI.Pages;
 
 public class ContextMenuPage
 {
@@ -13,11 +13,13 @@ public class ContextMenuPage
         var box=_d.FindElement(By.Id("hot-spot"));
         new Actions(_d).ContextClick(box).Perform();
     }
-    public string AcceptAlert()
-    {
-        var alert = _d.SwitchTo().Alert();
-        var text = alert.Text;
-        alert.Accept();
-        return text;
-    }
+public string AcceptAlert()
+{
+    // якщо алерта немає — кине NoAlertPresentException (це ок для контракту)
+    var alert = _d.SwitchTo().Alert();
+    var text = alert.Text ?? string.Empty;
+    alert.Accept();
+    return text;
+}
+
 }
